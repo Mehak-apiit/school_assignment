@@ -1,0 +1,274 @@
+{
+  "info": {
+    "name": "School Management API",
+    "description": "Collection for School Management API - Layered Architecture with Repository Pattern",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Add School",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"ABC High School\",\n  \"address\": \"123 Main Street, New Delhi\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.2090\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/addSchool",
+          "host": ["{{base_url}}"],
+          "path": ["addSchool"]
+        },
+        "description": "Add a new school to the database. All fields are required and validated."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ABC High School\",\n  \"address\": \"123 Main Street, New Delhi\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.2090\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/addSchool",
+              "host": ["{{base_url}}"],
+              "path": ["addSchool"]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"success\": true,\n  \"message\": \"School added successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"ABC High School\",\n    \"address\": \"123 Main Street, New Delhi\",\n    \"latitude\": 28.6139,\n    \"longitude\": 77.2090\n  }\n}"
+        },
+        {
+          "name": "Error - Missing Name",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"123 Main Street\",\n  \"latitude\": 28.6139,\n  \"longitude\": 77.2090\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/addSchool",
+              "host": ["{{base_url}}"],
+              "path": ["addSchool"]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"School name is required\"\n}"
+        },
+        {
+          "name": "Error - Invalid Latitude",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test School\",\n  \"address\": \"123 Street\",\n  \"latitude\": 95.0,\n  \"longitude\": 77.2090\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/addSchool",
+              "host": ["{{base_url}}"],
+              "path": ["addSchool"]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Latitude must be a number between -90 and 90\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "List Schools (Sorted by Proximity)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/listSchools?latitude=28.6139&longitude=77.2090",
+          "host": ["{{base_url}}"],
+          "path": ["listSchools"],
+          "query": [
+            {
+              "key": "latitude",
+              "value": "28.6139",
+              "description": "User's latitude coordinate (required)"
+            },
+            {
+              "key": "longitude",
+              "value": "77.2090",
+              "description": "User's longitude coordinate (required)"
+            }
+          ]
+        },
+        "description": "List all schools sorted by proximity to the user's location. Distance is calculated using the Haversine formula and returned in kilometers."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listSchools?latitude=28.6139&longitude=77.2090",
+              "host": ["{{base_url}}"],
+              "path": ["listSchools"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "28.6139"
+                },
+                {
+                  "key": "longitude",
+                  "value": "77.2090"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"success\": true,\n  \"count\": 3,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"ABC High School\",\n      \"address\": \"123 Main Street, New Delhi\",\n      \"latitude\": 28.6139,\n      \"longitude\": 77.2090,\n      \"distance\": 0.0\n    },\n    {\n      \"id\": 2,\n      \"name\": \"XYZ School\",\n      \"address\": \"456 Park Avenue, New Delhi\",\n      \"latitude\": 28.6200,\n      \"longitude\": 77.2100,\n      \"distance\": 0.78\n    },\n    {\n      \"id\": 3,\n      \"name\": \"International School\",\n      \"address\": \"789 Elite Road, Gurgaon\",\n      \"latitude\": 28.4500,\n      \"longitude\": 77.0500,\n      \"distance\": 18.5\n    }\n  ]\n}"
+        },
+        {
+          "name": "Error - Missing Latitude",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listSchools?longitude=77.2090",
+              "host": ["{{base_url}}"],
+              "path": ["listSchools"],
+              "query": [
+                {
+                  "key": "longitude",
+                  "value": "77.2090"
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Latitude parameter is required\"\n}"
+        },
+        {
+          "name": "Error - Invalid Longitude",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listSchools?latitude=28.6139&longitude=200.0",
+              "host": ["{{base_url}}"],
+              "path": ["listSchools"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "28.6139"
+                },
+                {
+                  "key": "longitude",
+                  "value": "200.0"
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Longitude must be a number between -180 and 180\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Check if the API is running and get available endpoints"
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"message\": \"School Management API\",\n  \"version\": \"1.0.0\",\n  \"architecture\": \"Layered Architecture (Repository Pattern)\",\n  \"endpoints\": {\n    \"POST /addSchool\": \"Add a new school\",\n    \"GET /listSchools\": \"List all schools sorted by proximity to user location\"\n  }\n}"
+        }
+      ]
+    }
+  ]
+}
